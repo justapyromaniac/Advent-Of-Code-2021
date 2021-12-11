@@ -3,7 +3,6 @@ package com.adventofcode;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -33,7 +32,7 @@ public class App {
         //#endregion
 
         //#region Input reader
-        BufferedReader reader = new BufferedReader(new FileReader("D:\\Jonas\\code projects\\Advent of code\\adventofcode\\src\\main\\java\\com\\adventofcode\\input.txt"));
+        BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("user.dir") + "\\src\\main\\java\\com\\adventofcode\\input.txt"));
         ArrayList<Integer> readings = new ArrayList<Integer>();
         boolean halt = false;
         String line = "";
