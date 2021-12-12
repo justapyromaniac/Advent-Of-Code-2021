@@ -6,98 +6,129 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Hello world!
- *
- */
 public class App {
-    public static void main( String[] args ) throws IOException {
-        //#region test readings
-        /*
-        ArrayList<Integer> readings = new ArrayList<Integer>(
-            Arrays.asList(
-                199,
-                200,
-                208,
-                210,
-                200,
-                207,
-                240,
-                269,
-                260,  
-                263
-            )
-        );
-        */
-        //#endregion
+    public static void main( String[] args ) {    
 
-        //#region Input reader
-        BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("user.dir") + "\\src\\main\\java\\com\\adventofcode\\input.txt"));
-        ArrayList<Integer> readings = new ArrayList<Integer>();
-        boolean halt = false;
-        String line = "";
-        do{
-            line = reader.readLine();
-            try {
-                int parsedReading = Integer.parseInt(line);
-                readings.add(parsedReading);
-            } catch (NumberFormatException e) {
-                halt = true;
-                reader.close();
-            }
-        }while(!halt);
-        //#endregion Input reader
-        
-        //#region solution part 1
+        final int windowSize = 3;   
+
         System.out.println();
         System.out.println("------ Day one: Sonar readings. Solution part 1 ------");
-        int largerThanPrevious = 0;
+        System.out.println();
+        System.out.println("Answer: " + calculateDepthIncreases());
+        System.out.println();
+        System.out.println("------------");
+        System.out.println();
+
+        System.out.println();
+        System.out.println("------ Day one: Sonar readings. Solution part 2 ------");
+        System.out.println();
+        System.out.println();
+        System.out.println("Answer: " + calculateWindowedDepthIncreases(windowSize));
+        System.out.println();
+        System.out.println("------------");
+        System.out.println();
+    }
+
+    public static ArrayList<Integer> readInputs() {
+
+        ArrayList<Integer> readings = new ArrayList<Integer>();
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("user.dir") + "\\dayone\\src\\main\\java\\com\\adventofcode\\input.txt"));
+            boolean halt = false;
+            String line = "";
+            do{
+                line = reader.readLine();
+                try {
+                    int parsedReading = Integer.parseInt(line);
+                    readings.add(parsedReading);
+                } catch (NumberFormatException e) {
+                    halt = true;
+                    reader.close();
+                }
+            }while(!halt);
+
+        } catch (IOException e) {
+
+            System.out.println("Failed to read file");
+            readings = new ArrayList<Integer>(
+                Arrays.asList(
+                    199,
+                    200,
+                    208,
+                    210,
+                    200,
+                    207,
+                    240,
+                    269,
+                    260,  
+                    263
+                )
+            );
+        }
+
+        return readings;
+    }
+
+    public static int calculateDepthIncreases() {
+
+        int output = 0;
+        ArrayList<Integer> readings = readInputs();
+
         System.out.println(readings.get(0) + " (N/A - No previous measurement");
         for(int i = 1; i < readings.size(); i++) {
+
             if(readings.get(i-1) < readings.get(i)) {
                 System.out.println(readings.get(i) + " (increased)");
-                largerThanPrevious++;
+                output++;
             } else if(readings.get(i-1) > readings.get(i)) {
                 System.out.println(readings.get(i) + " (decreased)");
             } else {
                 System.out.println(readings.get(i) + " (no change)");
             }
         }
-        System.out.println();
-        System.out.println("Answer: " + largerThanPrevious);
-        System.out.println();
-        System.out.println("------------");
-        System.out.println();
-        //#endregion solution part 1
+
+        return output;
+    }
+
+    public static int calculateWindowedReading(int windowsize, int startingIndex) {
+
+        int output = 0;
+        ArrayList<Integer> readings = readInputs();
         
-        //#region solution part 2
-        System.out.println();
-        System.out.println("------ Day one: Sonar readings. Solution part 2 ------");
-        System.out.println();
-        int largerThanPreviousWindow = 0;
-        int firstWindow = readings.get(0) + readings.get(1) + readings.get(2);
+        for(int i = windowsize; i > 0; i--) {
+            output += readings.get(startingIndex + (windowsize-i));
+        }
+
+        return output;
+    }
+
+    public static int calculateWindowedDepthIncreases(int windowSize) {
+
+        int output = 0;
         int currentWindow = 0;
+        int firstWindow = calculateWindowedReading(windowSize, 0);
         int previousWindow = firstWindow;
+        ArrayList<Integer> readings = readInputs();
+
         System.out.println(firstWindow + " (N/A - No previous sum)");
         for(int i = 1; i < readings.size(); i++) {
+
             if(i+2 < readings.size()) {
-                currentWindow = readings.get(i) + readings.get(i+1) + readings.get(i+2);
+                currentWindow = calculateWindowedReading(windowSize, i);
                 if(previousWindow < currentWindow) {
                     System.out.println(currentWindow + " (increased)");
-                    largerThanPreviousWindow++;
+                    output++;
                 } else if(previousWindow > currentWindow) {
                     System.out.println(currentWindow + " (decreased)");
                 } else {
                     System.out.println(currentWindow + " (no change)");
                 }
+
                 previousWindow = currentWindow;
             }
         }
-        System.out.println();
-        System.out.println("Answer: " + largerThanPreviousWindow);
-        System.out.println();
-        System.out.println("------------");
-        System.out.println();
-        //#endregion solution part 2
+
+        return output;
     }
 }
